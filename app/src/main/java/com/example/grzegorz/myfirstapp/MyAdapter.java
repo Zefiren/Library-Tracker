@@ -22,7 +22,7 @@ import org.parceler.Parcels;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private static DisplayLibraryActivity.Book [] mDataset;
+    private static Book [] mDataset;
     private static Context packageContext;
 
 
@@ -50,7 +50,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
                     int mSelectedItemPosition = getAdapterPosition();
 
-                    DisplayLibraryActivity.Book selectedBook = MyAdapter.mDataset[getAdapterPosition()];
+                    Book selectedBook = MyAdapter.mDataset[getAdapterPosition()];
                     Intent intent = new Intent(MyAdapter.packageContext,DisplaySingleBookActivity.class);
                     intent.putExtra(DisplayLibraryActivity.EXTRA_BOOK, Parcels.wrap(selectedBook));
 
@@ -73,12 +73,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(DisplayLibraryActivity.Book [] myDataset, Context packageContext) {
+    public MyAdapter(Book [] myDataset, Context packageContext) {
         mDataset = myDataset;
         this.packageContext = packageContext;
     }
 
-    public DisplayLibraryActivity.Book getItemAtPosition(int position){ return mDataset[position] ;}
+    public Book getItemAtPosition(int position){ return mDataset[position] ;}
 
     // Create new views (invoked by the layout manager)
     @Override

@@ -1,4 +1,4 @@
-    package com.example.grzegorz.myfirstapp;
+package com.example.grzegorz.myfirstapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -25,80 +25,34 @@ import org.parceler.Parcels;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-    public class DisplayLibraryActivity extends AppCompatActivity {
-        @Parcel
-        static public class Book {
-            String title;
-            String author;
-            boolean have_book;
-            int libraryID;
-
-            public Book() {
-            }
-
-            @ParcelConstructor
-            Book(String title, String author, boolean have_book,int libraryID){
-                this.title = title;
-                this.author = author;
-                this.have_book = have_book;
-                this.libraryID = libraryID;
-            }
-
-            public int getLibraryID() {
-                return libraryID;
-            }
-
-            public String getTitle() {
-                return title;
-            }
-
-            public void setTitle(String title) {
-                this.title = title;
-            }
-
-            public String getAuthor() {
-                return author;
-            }
-
-            public void setAuthor(String author) {
-                this.author = author;
-            }
-
-            public boolean isHave_book() {
-                return have_book;
-            }
-
-            public void setHave_book(boolean have_book) {
-                this.have_book = have_book;
-            }
-
-            @Override
-            public String toString() {
-                return title + " by " + author;
-            }
-        }
-
-        public static final String EXTRA_BOOK = "com.example.grzegorz.myfirstapp.BOOK";
-        public static final String titleSort = "title ASC";
-        public static final String authorSort = "author ASC";
-
-        public static  String orderBy = titleSort;
+public class DisplayLibraryActivity extends AppCompatActivity {
 
 
-        private RecyclerView mRecyclerView;
-        private RecyclerView.Adapter mAdapter;
-        private RecyclerView.LayoutManager mLayoutManager;
+    public static final String EXTRA_BOOK = "com.example.grzegorz.myfirstapp.BOOK";
+    public static final String titleSort = "title ASC";
+    public static final String authorSort = "author ASC";
+    public  static  final  int orderByTitle = 0;
+    public  static  final  int orderByAuthor = 1;
 
-        @Override
+    public static int orderBy = orderByTitle;
+
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_library);
+        MySQLiteHelper db = new MySQLiteHelper(this);
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        Boolean viewOnly = intent.getBooleanExtra(MainActivity.EXTRA_VIEW_ONLY,false);
+        Boolean viewOnly = intent.getBooleanExtra(MainActivity.EXTRA_VIEW_ONLY, false);
         String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
         String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
 
@@ -112,85 +66,108 @@ import java.util.List;
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-;
+        ;
+//
+//        final SQLiteDatabase myDB =
+//                openOrCreateDatabase("my.db", MODE_PRIVATE, null);
+//        myDB.execSQL(
+//                "CREATE TABLE IF NOT EXISTS books (bookID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,title VARCHAR(200), author VARCHAR(100), haveBook BIT)"
+//        );
+        if (title != null)
+            addBook(intent);
 
-        final SQLiteDatabase myDB =
-                openOrCreateDatabase("my.db", MODE_PRIVATE, null);
-        myDB.execSQL(
-                "CREATE TABLE IF NOT EXISTS books (bookID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,title VARCHAR(200), author VARCHAR(100), haveBook BIT)"
-        );
-        if(title != null)
-            addBook(intent,myDB);
-
-        initializeList(myDB);
+        initializeList();
 
     }
 
 
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_display, menu);
-            MenuItem item = menu.findItem(R.id.spinner_library);
-            item.setVisible(true);
-            final Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_display, menu);
+        MenuItem item = menu.findItem(R.id.spinner_library);
+        item.setVisible(true);
+        final Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
 
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                        R.array.sort_options, android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if(position==0)
-                        orderBy = titleSort;
-                    else
-                        orderBy = authorSort;
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int oldOrder = orderBy;
+                if (position == 0)
+                    orderBy = orderByTitle;
+                else
+                    orderBy = orderByAuthor;
+                if(orderBy != oldOrder) {
                     showLibrary();
                 }
+            }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-                }
-            });
-
-
-            return super.onCreateOptionsMenu(menu);
-        }
-
-        private void addBook(Intent intent, SQLiteDatabase myDB){
-        String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
-        String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
+            }
+        });
 
 
-        ContentValues row = new ContentValues();
-        row.put("title", title);
-        row.put("author", author);
-        row.put("haveBook", 1);
-        myDB.insert("books", null, row);
+        return super.onCreateOptionsMenu(menu);
     }
 
-    private void initializeList(final SQLiteDatabase myDB){
-        final Cursor myCursor =
-                myDB.query("books", new String[]{"bookID","title","author","haveBook"} ,null, null, null, null, orderBy);
+    private void addBook(Intent intent) {
+        MySQLiteHelper myDB = new MySQLiteHelper(this);
 
-//        List<Book> books = new ArrayList<Book>();
-        Book[] books = new Book[myCursor.getCount()];
-        while(myCursor.moveToNext()) {
-            Book book = new Book( myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
-            books[myCursor.getPosition()] = book;
-        }
+        String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
+        String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
+        Book book = new Book(title,author,true,0);
 
-        /*ArrayAdapter adapter = new ArrayAdapter<Book>(this,
-                R.layout.activity_listview, books);
-*/
-//        final ListView listView = (ListView) findViewById(R.id.messageList);
-//        listView.setAdapter(adapter);
+//        ContentValues row = new ContentValues();
+//        row.put("title", title);
+//        row.put("author", author);
+//        row.put("haveBook", 1);
+        myDB.addBook(book);
+//                insert("books", null, row);
+    }
 
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter( books,this);
+    private void initializeList() {
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        List<Book> books = db.getAllBooks();
+        Log.v("Books","numbr: " + books.size());
+
+        Book[] array = new Book[books.size()];
+        books.toArray(array);
+//        final Cursor myCursor =
+//                myDB.query("books", new String[]{"bookID", "title", "author", "haveBook"}, null, null, null, null, orderBy);
+
+//        Book[] books = new Book[myCursor.getCount()];
+//        while (myCursor.moveToNext()) {
+//            Book book = new Book(myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
+//            books[myCursor.getPosition()] = book;
+//        }
+
+        mAdapter = new MyAdapter(array, this);
         mRecyclerView.setAdapter(mAdapter);
-        myCursor.close();
+//        final Cursor myCursor =
+//                myDB.query("books", new String[]{"bookID", "title", "author", "haveBook"}, null, null, null, null, orderBy);
+//
+////        List<Book> books = new ArrayList<Book>();
+//        Book[] books = new Book[myCursor.getCount()];
+//        while (myCursor.moveToNext()) {
+//            Book book = new Book(myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
+//            books[myCursor.getPosition()] = book;
+//        }
+//
+//        /*ArrayAdapter adapter = new ArrayAdapter<Book>(this,
+//                R.layout.activity_listview, books);
+//*/
+////        final ListView listView = (ListView) findViewById(R.id.messageList);
+////        listView.setAdapter(adapter);
+//
+//        // specify an adapter (see also next example)
+//        mAdapter = new MyAdapter(books, this);
+//        mRecyclerView.setAdapter(mAdapter);
+//        myCursor.close();
 /*
         mRecyclerView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -223,18 +200,33 @@ import java.util.List;
     }
 
 
+    private void showLibrary() {
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        List<Book> books = db.getAllBooks();
+        books.sort(new Comparator<Book>() {
+            @Override
+            public int compare(Book o1, Book o2) {
+                if(orderBy == orderByTitle)
+                    return o1.getTitle().compareTo(o2.getTitle());
+                else
+                    return o1.getAuthor().compareTo(o2.getAuthor());
+            }
+        });
+        Log.v("Books","numbr: " + books.size());
 
-        private void showLibrary(SQLiteDatabase myDB){
-        final Cursor myCursor =
-                myDB.query("books", new String[]{"bookID","title","author", "haveBook"} ,null, null, null, null, orderBy);
+        Book[] array = new Book[books.size()];
+        books.toArray(array);
 
-        Book[] books = new Book[myCursor.getCount()];
-        while(myCursor.moveToNext()) {
-            Book book = new Book( myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
-            books[myCursor.getPosition()] = book;
-        }
+//        final Cursor myCursor =
+//                myDB.query("books", new String[]{"bookID", "title", "author", "haveBook"}, null, null, null, null, orderBy);
 
-        mAdapter = new MyAdapter( books,this);
+//        Book[] books = new Book[myCursor.getCount()];
+//        while (myCursor.moveToNext()) {
+//            Book book = new Book(myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
+//            books[myCursor.getPosition()] = book;
+//        }
+
+        mAdapter = new MyAdapter(array, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 

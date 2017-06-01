@@ -18,7 +18,7 @@ import org.parceler.Parcels;
 public class DisplaySingleBookActivity extends AppCompatActivity {
 
     private boolean changedDetails = false;
-    private static DisplayLibraryActivity.Book book;
+    private static Book book;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

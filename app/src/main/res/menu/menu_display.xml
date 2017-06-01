@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+    <item
+        android:id="@+id/spinner_library"
+        android:background="#ff00"
+        android:entries="@array/sort_options"
+        android:prompt="@string/library_sort"
+        android:title="ActionBar Spinner"
+        android:visible="false"
+        app:actionViewClass="android.widget.Spinner"
+        app:showAsAction="always" />
+
+        />
+</menu>

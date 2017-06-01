@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">My First App</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Add New Book</string>
+    <string name="title">Book Title</string>
+    <string name="author">Book Author</string>
+    <string name="button_view">View Books</string>
+    <string name="have_book">I already have this book</string>
+    <string name="not_have_book">I don\'t have this book yet</string>
+    <string name="library_sort">Choose Sort Method</string>
+
+    <string-array name="sort_options">
+        <item>Title sort</item>
+        <item>Author sort</item>
+    </string-array>
+</resources>

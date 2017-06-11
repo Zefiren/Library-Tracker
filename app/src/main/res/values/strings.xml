@@ -17,4 +17,7 @@
     <string name="menuEdit">Edit Record</string>
     <string name="menuRemove">Remove Record</string>
     <string name="add_book">Add Book</string>
+    <string name="bookAddedPrompt">Book added</string>
+    <string name="bookAlreadyTrackedPrompt">Book already being tracked</string>
+    <string name="bookNotTrackedPrompt">Book is not being tracked</string>
 </resources>

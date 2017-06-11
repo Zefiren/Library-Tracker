@@ -90,17 +90,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         KEY_TITLE, KEY_AUTHOR, KEY_ISBN, KEY_HAVE }, KEY_ISBN + "=?",
                 new String[] { isbn }, null, null, null, null);
 
-        if (cursor != null)
-            cursor.moveToFirst();
-        else
-            return null;
+        if (cursor != null && cursor.moveToFirst()) {
 
-        Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1,cursor.getInt(0));
+            Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1, cursor.getInt(0));
+            cursor.close();
+            // return book
+            return book;
 
-        cursor.close();
-
-        // return book
-        return book;
+        }
+        return null;
     }
 
     // Getting All books
@@ -151,6 +149,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // updating row
         return db.update(TABLE_BOOKS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(book.getLibraryID()) });
+
     }
 
     // Deleting single book

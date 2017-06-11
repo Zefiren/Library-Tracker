@@ -17,15 +17,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "contactsManager";
+    private static final String DATABASE_NAME = "bookTracker";
 
-    // Contacts table name
+    // Books table name
     private static final String TABLE_BOOKS = "books";
 
     // Book Table Columns names
     private static final String KEY_ID = "book_id";
     private static final String KEY_TITLE = "name";
     private static final String KEY_AUTHOR = "author";
+    private static final String KEY_ISBN = "isbn_10";
     private static final String KEY_HAVE = "haveBook";
 
     public MySQLiteHelper(Context context) {
@@ -37,7 +38,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_BOOKS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_BOOKS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + KEY_TITLE + "  VARCHAR(200),"
-                + KEY_AUTHOR + " VARCHAR(100),"+ KEY_HAVE + " BIT" + ")";
+                + KEY_AUTHOR + " VARCHAR(100),"  + KEY_HAVE + " BIT," + KEY_ISBN + " VARCHAR(10)" + ")";
         db.execSQL(CREATE_BOOKS_TABLE);
     }
 
@@ -58,6 +59,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, book.getTitle());
         values.put(KEY_AUTHOR, book.getAuthor());
+        values.put(KEY_ISBN, book.getIsbn_code());
         values.put(KEY_HAVE, book.isHave_book() ? 1 : 0);
 
 
@@ -65,17 +67,38 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.insert(TABLE_BOOKS, null, values);
         db.close(); // Closing database connection}
     }
-    // Getting single book
+    // Getting single book with the library int id
     public Book getBook(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_BOOKS, new String[] { KEY_ID,
-                        KEY_TITLE, KEY_AUTHOR,KEY_HAVE }, KEY_ID + "=?",
+                        KEY_TITLE, KEY_AUTHOR, KEY_ISBN, KEY_HAVE }, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
+        Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1,cursor.getInt(0));
+        cursor.close();
 
-        Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getInt(3) == 1,cursor.getInt(0));
+        // return book
+        return book;
+    }
+
+    // Getting single book with the given String ISBN code
+    public Book getBookByISBN(String isbn) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_BOOKS, new String[] { KEY_ID,
+                        KEY_TITLE, KEY_AUTHOR, KEY_ISBN, KEY_HAVE }, KEY_ISBN + "=?",
+                new String[] { isbn }, null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+        else
+            return null;
+
+        Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1,cursor.getInt(0));
+
+        cursor.close();
+
         // return book
         return book;
     }
@@ -92,12 +115,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Book contact = new Book();
-                contact.setTitle(cursor.getString(1));
-                contact.setAuthor(cursor.getString(2));
-                contact.setHave_book(cursor.getInt(3) == 1);
+                Book book = new Book();
+                book.setTitle(cursor.getString(1));
+                book.setAuthor(cursor.getString(2));
+                book.setIsbn_code(cursor.getString(4));
+                book.setHave_book(cursor.getInt(3) == 1);
                 // Adding book to list
-                bookList.add(contact);
+                bookList.add(book);
             } while (cursor.moveToNext());
         }
 
@@ -122,15 +146,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, book.getTitle());
         values.put(KEY_AUTHOR, book.getAuthor());
-
+        values.put(KEY_ISBN, book.getIsbn_code());
+        values.put(KEY_HAVE, book.isHave_book());
         // updating row
         return db.update(TABLE_BOOKS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(book.getLibraryID()) });
     }
 
     // Deleting single book
-    public void deleteBook(Book contact) {    SQLiteDatabase db = this.getWritableDatabase();
+    public void deleteBook(Book book) {    SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_BOOKS, KEY_ID + " = ?",
-                new String[] { String.valueOf(contact.getLibraryID()) });
+                new String[] { String.valueOf(book.getLibraryID()) });
         db.close();}
 }

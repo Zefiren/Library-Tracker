@@ -22,7 +22,7 @@ import org.parceler.Parcels;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private static Book [] mDataset;
+    private static Book[] mDataset;
     private static Context packageContext;
 
 
@@ -36,7 +36,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView mTextView;
         public TextView mATextView;
 
-        public ViewHolder(View v){
+        public ViewHolder(View v) {
             super(v);
             mCardView = (CardView) v.findViewById(R.id.cardView);
             mTextView = (TextView) v.findViewById(R.id.titleText);
@@ -44,48 +44,63 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
             mCardView.setOnCreateContextMenuListener(this);
 
-            mCardView.setOnClickListener(new View.OnClickListener(){
+            mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     int mSelectedItemPosition = getAdapterPosition();
 
                     Book selectedBook = MyAdapter.mDataset[getAdapterPosition()];
-                    Intent intent = new Intent(MyAdapter.packageContext,DisplaySingleBookActivity.class);
+                    Intent intent = new Intent(MyAdapter.packageContext, DisplaySingleBookActivity.class);
                     intent.putExtra(DisplayLibraryActivity.EXTRA_BOOK, Parcels.wrap(selectedBook));
+
+                    //Find out if searching books to add or displaying one already tracked
+                    if(packageContext instanceof DisplaySearchResultActivity)
+                        intent.putExtra(DisplaySearchResultActivity.EXTRA_ADDING, true);
+
 
                     packageContext.startActivity(intent);
                     //Your other handling in onclick
 
-                }});
+                }
+            });
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v,
                                         ContextMenu.ContextMenuInfo menuInfo) {
             //menuInfo is null
-            menu.add(Menu.NONE, v.getId(),
-                    getAdapterPosition(), "Edit");
-            menu.add(Menu.NONE,  v.getId(),
-                    Menu.NONE, "Delete");
+            if(packageContext instanceof DisplaySearchResultActivity){
+                menu.add(Menu.NONE, v.getId(),
+                        getAdapterPosition(), R.string.menuEdit);
+                menu.add(Menu.NONE, v.getId(),
+                        Menu.NONE, R.string.menuRemove);
+            }
+            /*else
+                menu.add(Menu.NONE, v.getId(),
+                    Menu.NONE, R.string.menuAdd);*/
         }
+
+
 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(Book [] myDataset, Context packageContext) {
+    public MyAdapter(Book[] myDataset, Context packageContext) {
         mDataset = myDataset;
         this.packageContext = packageContext;
     }
 
-    public Book getItemAtPosition(int position){ return mDataset[position] ;}
+    public Book getItemAtPosition(int position) {
+        return mDataset[position];
+    }
 
     // Create new views (invoked by the layout manager)
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         // create a new view
-        View v =  LayoutInflater.from(parent.getContext())
+        View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_card_view, parent, false);
 
         // set the view's size, margins, paddings and layout parameters
@@ -99,7 +114,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Log.v("title of book",mDataset[position].getTitle());
+//        Log.v("title of book",mDataset[position].getTitle());
         holder.mTextView.setText(mDataset[position].getTitle());
         holder.mATextView.setText(mDataset[position].getAuthor());
 

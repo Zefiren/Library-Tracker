@@ -66,13 +66,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        ;
-//
-//        final SQLiteDatabase myDB =
-//                openOrCreateDatabase("my.db", MODE_PRIVATE, null);
-//        myDB.execSQL(
-//                "CREATE TABLE IF NOT EXISTS books (bookID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,title VARCHAR(200), author VARCHAR(100), haveBook BIT)"
-//        );
+
         if (title != null)
             addBook(intent);
 
@@ -120,14 +114,10 @@ public class DisplayLibraryActivity extends AppCompatActivity {
 
         String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
         String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
-        Book book = new Book(title,author,true,0);
+        Book book = new Book(title,author,"",true,0);
 
-//        ContentValues row = new ContentValues();
-//        row.put("title", title);
-//        row.put("author", author);
-//        row.put("haveBook", 1);
+
         myDB.addBook(book);
-//                insert("books", null, row);
     }
 
     private void initializeList() {
@@ -137,66 +127,10 @@ public class DisplayLibraryActivity extends AppCompatActivity {
 
         Book[] array = new Book[books.size()];
         books.toArray(array);
-//        final Cursor myCursor =
-//                myDB.query("books", new String[]{"bookID", "title", "author", "haveBook"}, null, null, null, null, orderBy);
-
-//        Book[] books = new Book[myCursor.getCount()];
-//        while (myCursor.moveToNext()) {
-//            Book book = new Book(myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
-//            books[myCursor.getPosition()] = book;
-//        }
 
         mAdapter = new MyAdapter(array, this);
         mRecyclerView.setAdapter(mAdapter);
-//        final Cursor myCursor =
-//                myDB.query("books", new String[]{"bookID", "title", "author", "haveBook"}, null, null, null, null, orderBy);
-//
-////        List<Book> books = new ArrayList<Book>();
-//        Book[] books = new Book[myCursor.getCount()];
-//        while (myCursor.moveToNext()) {
-//            Book book = new Book(myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
-//            books[myCursor.getPosition()] = book;
-//        }
-//
-//        /*ArrayAdapter adapter = new ArrayAdapter<Book>(this,
-//                R.layout.activity_listview, books);
-//*/
-////        final ListView listView = (ListView) findViewById(R.id.messageList);
-////        listView.setAdapter(adapter);
-//
-//        // specify an adapter (see also next example)
-//        mAdapter = new MyAdapter(books, this);
-//        mRecyclerView.setAdapter(mAdapter);
-//        myCursor.close();
-/*
-        mRecyclerView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                           int pos, long id) {
-                // TODO Auto-generated method stub
-                Book selectedBook = (Book) listView.getItemAtPosition(pos);
 
-                myDB.delete("books","bookID = ?",new String[]{Integer.toString(selectedBook.getLibraryID())});
-                Log.v("Book:",Integer.toString(selectedBook.getLibraryID()) +  " "+ selectedBook.toString());
-
-                showLibrary(myDB);
-                Log.v("long clicked","pos: " + pos);
-
-                return true;
-            }
-        });*/
-
-       /* mRecyclerView.setOnClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Book selectedBook = (Book) ((MyAdapter) mAdapter).getItemAtPosition(position);
-                Intent intent = new Intent(DisplayLibraryActivity.this,DisplaySingleBookActivity.class);
-                intent.putExtra(DisplayLibraryActivity.EXTRA_BOOK, Parcels.wrap(selectedBook));
-
-                startActivity(intent);
-
-            }
-        });*/
     }
 
 

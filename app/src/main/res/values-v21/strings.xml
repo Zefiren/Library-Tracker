@@ -7,4 +7,5 @@
     <string name="button_view">View Books</string>
     <string name="have_book">You already have this book</string>
     <string name="not_have_book">You don\'t have this book yet</string>
+    <string name="button_search">Search for Book</string>
 </resources>

@@ -4,7 +4,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.grzegorz.myfirstapp.DisplayLibraryActivity">
+    tools:context="com.example.grzegorz.myfirstapp.DisplayBookAddingActivity">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
@@ -53,6 +53,13 @@
                 android:layout_weight="1"
                 android:text="@string/have_book"
                 android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/addBookBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/add_book" />
 
         </LinearLayout>
 

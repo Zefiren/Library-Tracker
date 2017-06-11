@@ -8,9 +8,13 @@
     <string name="have_book">I already have this book</string>
     <string name="not_have_book">I don\'t have this book yet</string>
     <string name="library_sort">Choose Sort Method</string>
+    <string name="button_search">Search for Book</string>
 
     <string-array name="sort_options">
         <item>Title sort</item>
         <item>Author sort</item>
     </string-array>
+    <string name="menuEdit">Edit Record</string>
+    <string name="menuRemove">Remove Record</string>
+    <string name="add_book">Add Book</string>
 </resources>

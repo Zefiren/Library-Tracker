@@ -2,6 +2,7 @@ package com.example.grzegorz.myfirstapp;
 
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +17,7 @@ import org.parceler.Parcels;
  */
 
 public class DisplaySingleBookActivity extends AppCompatActivity {
-
+    private boolean addingAllowed;
     private boolean changedDetails = false;
     private static Book book;
 
@@ -24,8 +25,10 @@ public class DisplaySingleBookActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_single_book);
-        book = Parcels.unwrap( getIntent().getParcelableExtra(DisplayLibraryActivity.EXTRA_BOOK));
+        Intent intent = getIntent();
 
+        book = Parcels.unwrap( intent.getParcelableExtra(DisplayLibraryActivity.EXTRA_BOOK));
+        addingAllowed = intent.getBooleanExtra(DisplaySearchResultActivity.EXTRA_ADDING,true);
         TextView titleView = (TextView)  findViewById(R.id.titleText);
         TextView authorView = (TextView)  findViewById(R.id.authorText);
         Button haveBtn = (Button)  findViewById(R.id.haveBook);
@@ -38,19 +41,31 @@ public class DisplaySingleBookActivity extends AppCompatActivity {
             haveBtn.setText(R.string.not_have_book);
     }
 
+    protected void checkLibrary(){
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        Book bookInLibrary = db.getBookByISBN(book.getIsbn_code());
+        if(bookInLibrary == null) {
+            Button addBtn = (Button) findViewById(R.id.addBookBtn);
+            addBtn.setText("Book already in library");
+            addBtn.setEnabled(false);
+        }
+    }
+
+    protected void addBtnPressed() {
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.addBook(book);
+        Button addBtn = (Button) findViewById(R.id.addBookBtn);
+        addBtn.setText("Book added to your library");
+        addBtn.setEnabled(false);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SQLiteDatabase myDB;
         if(changedDetails == true) {
-            myDB = openOrCreateDatabase("my.db", MODE_PRIVATE, null);
-            String where = "bookID=" + book.getLibraryID();
-
-            ContentValues row = new ContentValues();
-            row.put("title", book.getTitle());
-            row.put("author", book.getAuthor());
-            row.put("haveBook", book.isHave_book());
-            myDB.update("books", row,where,null);
+            MySQLiteHelper db = new MySQLiteHelper(this);
+            Book updated = new Book( book.getTitle(),book.getAuthor(),book.getIsbn_code(), book.isHave_book(),book.getLibraryID());
+            db.updateBook( updated );
         }
 
     }

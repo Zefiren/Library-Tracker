@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,12 +33,11 @@ public class DisplayLibraryActivity extends AppCompatActivity {
 
 
     public static final String EXTRA_BOOK = "com.example.grzegorz.myfirstapp.BOOK";
-    public static final String titleSort = "title ASC";
-    public static final String authorSort = "author ASC";
     public  static  final  int orderByTitle = 0;
     public  static  final  int orderByAuthor = 1;
 
     public static int orderBy = orderByTitle;
+    public static int scrollPos;
 
 
     private RecyclerView mRecyclerView;
@@ -109,12 +109,60 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putInt("orderBy", orderBy);
+        Log.v("orderBy","numbr: " + orderBy);
+
+        LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
+        savedInstanceState.putInt("position", layoutManager.findFirstVisibleItemPosition());
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        //read current recyclerview position
+        orderBy = orderBy;
+        scrollPos = ((LinearLayoutManager)mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v("orderByResuuuuume","numbr: " + orderBy);
+        //set recyclerview position
+        showLibrary();
+        if(scrollPos != -1)
+        {
+            ((LinearLayoutManager)mRecyclerView.getLayoutManager()).scrollToPositionWithOffset( scrollPos, 0);
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        orderBy = savedInstanceState.getInt("orderBy");
+        Log.v("orderByRestore","numbr: " + orderBy);
+
+        showLibrary();
+        LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
+        layoutManager.scrollToPositionWithOffset(savedInstanceState.getInt("position"),0);
+    }
+
     private void addBook(Intent intent) {
         MySQLiteHelper myDB = new MySQLiteHelper(this);
 
         String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
         String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
-        Book book = new Book(title,author,"",true,0);
+        Book book = new Book(title,author,"",true,-1);
 
 
         myDB.addBook(book);
@@ -133,6 +181,11 @@ public class DisplayLibraryActivity extends AppCompatActivity {
 
     }
 
+    public void clearLibrary(View view){
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.clearBooks();
+        showLibrary();
+    }
 
     private void showLibrary() {
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -162,6 +215,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
 
         mAdapter = new MyAdapter(array, this);
         mRecyclerView.setAdapter(mAdapter);
+
     }
 
 }

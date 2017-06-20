@@ -52,6 +52,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void clearBooks() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
+
+        // Create tables again
+        onCreate(db);
+    }
+
+
     // Adding new book
     public void addBook(Book book) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -74,13 +84,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_BOOKS, new String[] { KEY_ID,
                         KEY_TITLE, KEY_AUTHOR, KEY_ISBN, KEY_HAVE }, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-        Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1,cursor.getInt(0));
-        cursor.close();
-
-        // return book
-        return book;
+        Book book;
+        if (cursor != null && cursor.moveToFirst()) {
+            book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1, cursor.getInt(0));
+            cursor.close();
+            // return book
+            return book;
+        }
+        else
+            return null;
     }
 
     // Getting single book with the given String ISBN code
@@ -113,11 +125,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Book book = new Book();
-                book.setTitle(cursor.getString(1));
+                Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1, cursor.getInt(0));
+                /*book.setTitle(cursor.getString(1));
                 book.setAuthor(cursor.getString(2));
                 book.setIsbn_code(cursor.getString(4));
-                book.setHave_book(cursor.getInt(3) == 1);
+                book.setHave_book(cursor.getInt(3) == 1);*/
+
                 // Adding book to list
                 bookList.add(book);
             } while (cursor.moveToNext());

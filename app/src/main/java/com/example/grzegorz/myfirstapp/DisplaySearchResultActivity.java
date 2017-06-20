@@ -124,7 +124,6 @@ public class DisplaySearchResultActivity extends AppCompatActivity{
 
 
     private void searchBooks(final String title, final String author) {
-            Log.v("number of books","beginning");
 
             AsyncTask.execute(new Runnable() {
                 @Override
@@ -134,7 +133,13 @@ public class DisplaySearchResultActivity extends AppCompatActivity{
                     // Create URL
                     URL googleBooksEndpoint = null;
                     try {
-                    googleBooksEndpoint = new URL("https://www.googleapis.com/books/v1/volumes?q="+title+"+inauthor:"+ author + "&key="+ MainActivity.googleBooksApiKey);
+                        String inauth = "+inauthor:"+ author;
+                        Log.v("number of books",title.length() + " title is "+ author);
+
+                        if (author.length()<1)
+                            inauth = "";
+                        googleBooksEndpoint = new URL("https://www.googleapis.com/books/v1/volumes?q="+title+inauth+"&key="+ MainActivity.googleBooksApiKey);
+                        Log.v("number of books",googleBooksEndpoint.toString()+ "    length =" + author.length());
 
 //                        googleBooksEndpoint = new URL("https://www.googleapis.com/books/v1/volumes?"+ "q="+ title + "+inauthor:"+author);
 //

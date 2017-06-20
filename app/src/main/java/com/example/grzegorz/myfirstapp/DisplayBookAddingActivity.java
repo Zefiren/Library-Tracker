@@ -48,8 +48,8 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
             EditText editTitle = (EditText) findViewById(R.id.editTitle);
             EditText editAuthor = (EditText) findViewById(R.id.editAuthor);
 
-            String title = editTitle.getText().toString();
-            String author = editAuthor.getText().toString();
+            String title = editTitle.getText().toString().trim();
+            String author = editAuthor.getText().toString().trim();
 
             intent.putExtra(EXTRA_TITLE, title);
             intent.putExtra(EXTRA_AUTHOR, author);
@@ -69,9 +69,14 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
                         EditText editTitle = (EditText) findViewById(R.id.editTitle);
                         EditText editAuthor = (EditText) findViewById(R.id.editAuthor);
 
-                        String title = editTitle.getText().toString();
-                        String author = editAuthor.getText().toString();
-                        googleBooksEndpoint = new URL("https://www.googleapis.com/books/v1/volumes?" + "q=" + title + "+inauthor:" + author);
+                        String title = editTitle.getText().toString().trim();
+                        String author;
+                        if(editAuthor.getText().toString().trim().length() > 0)
+                            author = "+inauthor:" + editAuthor.getText().toString().trim();
+                        else
+                            author = "";
+
+                        googleBooksEndpoint = new URL("https://www.googleapis.com/books/v1/volumes?" + "q=" + title + author);
 
                         // Create connection
                         HttpsURLConnection myConnection =

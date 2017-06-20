@@ -4,11 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.grzegorz.myfirstapp.DisplayLibraryActivity" >
+    tools:context="com.example.grzegorz.myfirstapp.DisplayLibraryActivity"
+    android:weightSum="1">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/button2"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Clear Library"
+        android:background="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
+        android:onClick="clearLibrary"
+        />
 
 </LinearLayout>

@@ -49,6 +49,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 public void onClick(View v) {
 
                     int mSelectedItemPosition = getAdapterPosition();
+                    Log.v("selectedPosition","numbr: " + mSelectedItemPosition+ "; selected book: "+MyAdapter.mDataset[getAdapterPosition()].getTitle());
 
                     Book selectedBook = MyAdapter.mDataset[getAdapterPosition()];
                     Intent intent = new Intent(MyAdapter.packageContext, DisplaySingleBookActivity.class);
@@ -117,7 +118,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 //        Log.v("title of book",mDataset[position].getTitle());
         holder.mTextView.setText(mDataset[position].getTitle());
         holder.mATextView.setText(mDataset[position].getAuthor());
-
+        if(mDataset[position].isHave_book()) {
+            Log.v("have book","title:"+mDataset[position].getTitle()+"; have:"+mDataset[position].isHave_book());
+            holder.mCardView.setBackgroundColor(packageContext.getResources().getColor(R.color.colorAccent));
+        }
 
     }
 

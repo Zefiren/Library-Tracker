@@ -7,9 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.parceler.Parcels;
 
@@ -33,6 +35,7 @@ public class DisplaySingleBookActivity extends AppCompatActivity {
         TextView titleView = (TextView)  findViewById(R.id.titleText);
         TextView authorView = (TextView)  findViewById(R.id.authorText);
         Button haveBtn = (Button)  findViewById(R.id.haveBook);
+        Log.v("book shown"," book: "+book.getTitle() + "; ID: "+ book.getLibraryID());
 
         checkLibrary();
         titleView.setText(book.getTitle());
@@ -50,7 +53,7 @@ public class DisplaySingleBookActivity extends AppCompatActivity {
 
     protected void checkLibrary(){
         MySQLiteHelper db = new MySQLiteHelper(this);
-        Book bookInLibrary = db.getBookByISBN(book.getIsbn_code());
+        Book bookInLibrary = db.getBook(book.getLibraryID());
         if(bookInLibrary != null) {
             Button addBtn = (Button) findViewById(R.id.addBookBtn);
             addBtn.setText(R.string.bookAlreadyTrackedPrompt);

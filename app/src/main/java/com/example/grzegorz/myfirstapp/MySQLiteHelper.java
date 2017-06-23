@@ -86,7 +86,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(id) }, null, null, null, null);
         Book book;
         if (cursor != null && cursor.moveToFirst()) {
-            book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1, cursor.getInt(0));
+            Log.v("sqlite have value:",cursor.getInt(3)+"");
+            book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4) == 1, cursor.getInt(0));
             cursor.close();
             // return book
             return book;
@@ -103,8 +104,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 new String[] { isbn }, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-
-            Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1, cursor.getInt(0));
+            Log.v("sqlite have value:",cursor.getInt(3)+"");
+            Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4) == 1, cursor.getInt(0));
             cursor.close();
             // return book
             return book;
@@ -119,13 +120,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_BOOKS;
 
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_BOOKS, new String[] { KEY_ID,
+                        KEY_TITLE, KEY_AUTHOR, KEY_ISBN, KEY_HAVE }, null,
+               null, null, null, null, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(4), cursor.getInt(3) == 1, cursor.getInt(0));
+                Log.v("sqlite ALL have value:",cursor.getInt(3)+"");
+
+                Book book = new Book(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4) == 1, cursor.getInt(0));
                 /*book.setTitle(cursor.getString(1));
                 book.setAuthor(cursor.getString(2));
                 book.setIsbn_code(cursor.getString(4));
@@ -135,7 +139,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 bookList.add(book);
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
         // return book list
         return bookList;
     }

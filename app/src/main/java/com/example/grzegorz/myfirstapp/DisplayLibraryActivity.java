@@ -1,31 +1,26 @@
 package com.example.grzegorz.myfirstapp;
 
-import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcelable;
+import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import org.parceler.Parcel;
-import org.parceler.ParcelConstructor;
+import com.gaurav.cdsrecyclerview.CdsItemTouchCallback;
+import com.gaurav.cdsrecyclerview.CdsRecyclerView;
+import com.gaurav.cdsrecyclerview.CdsRecyclerViewAdapter;
+
 import org.parceler.Parcels;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -40,9 +35,9 @@ public class DisplayLibraryActivity extends AppCompatActivity {
     public static int scrollPos;
 
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private CdsRecyclerView mRecyclerView;
+    private CdsRecyclerViewAdapter mAdapter;
+    private CdsRecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +51,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
         String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView = (CdsRecyclerView) findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -71,6 +66,37 @@ public class DisplayLibraryActivity extends AppCompatActivity {
             addBook(intent);
 
         initializeList();
+
+        registerForContextMenu(mRecyclerView);
+        mRecyclerView.enableItemSwipe();
+        mRecyclerView.setItemClickListener(new CdsRecyclerView.ItemClickListener() {
+            @Override
+            public void onItemClick(int i) {
+
+                Book selectedBook =  (Book) mAdapter.getItem(i);
+                Intent intent = new Intent(DisplayLibraryActivity.this, DisplaySingleBookActivity.class);
+                intent.putExtra(DisplayLibraryActivity.EXTRA_BOOK, Parcels.wrap(selectedBook));
+                Context context = DisplayLibraryActivity.this;
+                //Find out if searching books to add or displaying one already tracked
+                if(context instanceof DisplaySearchResultActivity)
+                    intent.putExtra(DisplaySearchResultActivity.EXTRA_ADDING, true);
+
+
+                context.startActivity(intent);
+            }
+        });
+        mRecyclerView.setItemSwipeCompleteListener(new CdsItemTouchCallback.ItemSwipeCompleteListener() {
+            @Override
+            public void onItemSwipeComplete(int i) {
+                Book book = (Book) mAdapter.getItem(i);
+                Toast.makeText(DisplayLibraryActivity.this, "Book was deleted from library:"
+                                + book.getTitle() + " by " + book.getAuthor() ,
+                        Toast.LENGTH_SHORT).show();
+                MySQLiteHelper db = new MySQLiteHelper(DisplayLibraryActivity.this);
+                db.deleteBook(book);
+
+            }
+        });
 
     }
 
@@ -120,6 +146,16 @@ public class DisplayLibraryActivity extends AppCompatActivity {
 
         LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
         savedInstanceState.putInt("position", layoutManager.findFirstVisibleItemPosition());
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        int clickedItemPos = item.getOrder();
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)  item.getMenuInfo();
+        int listPosition = info.position;
+        Book book = (Book) mAdapter.getItem(listPosition);
+        Log.v("clicked pos",""+ listPosition);
+        return super.onContextItemSelected(item);
     }
 
     @Override

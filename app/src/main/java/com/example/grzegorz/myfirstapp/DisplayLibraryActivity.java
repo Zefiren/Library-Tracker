@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.gaurav.cdsrecyclerview.CdsItemTouchCallback;
-import com.gaurav.cdsrecyclerview.CdsRecyclerView;
-import com.gaurav.cdsrecyclerview.CdsRecyclerViewAdapter;
+
 
 import org.parceler.Parcels;
 
@@ -35,9 +34,9 @@ public class DisplayLibraryActivity extends AppCompatActivity {
     public static int scrollPos;
 
 
-    private CdsRecyclerView mRecyclerView;
-    private CdsRecyclerViewAdapter mAdapter;
-    private CdsRecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView mRecyclerView;
+    private MyAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
         String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
 
-        mRecyclerView = (CdsRecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -68,35 +67,8 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         initializeList();
 
         registerForContextMenu(mRecyclerView);
-        mRecyclerView.enableItemSwipe();
-        mRecyclerView.setItemClickListener(new CdsRecyclerView.ItemClickListener() {
-            @Override
-            public void onItemClick(int i) {
-
-                Book selectedBook =  (Book) mAdapter.getItem(i);
-                Intent intent = new Intent(DisplayLibraryActivity.this, DisplaySingleBookActivity.class);
-                intent.putExtra(DisplayLibraryActivity.EXTRA_BOOK, Parcels.wrap(selectedBook));
-                Context context = DisplayLibraryActivity.this;
-                //Find out if searching books to add or displaying one already tracked
-                if(context instanceof DisplaySearchResultActivity)
-                    intent.putExtra(DisplaySearchResultActivity.EXTRA_ADDING, true);
 
 
-                context.startActivity(intent);
-            }
-        });
-        mRecyclerView.setItemSwipeCompleteListener(new CdsItemTouchCallback.ItemSwipeCompleteListener() {
-            @Override
-            public void onItemSwipeComplete(int i) {
-                Book book = (Book) mAdapter.getItem(i);
-                Toast.makeText(DisplayLibraryActivity.this, "Book was deleted from library:"
-                                + book.getTitle() + " by " + book.getAuthor() ,
-                        Toast.LENGTH_SHORT).show();
-                MySQLiteHelper db = new MySQLiteHelper(DisplayLibraryActivity.this);
-                db.deleteBook(book);
-
-            }
-        });
 
     }
 
@@ -148,15 +120,6 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         savedInstanceState.putInt("position", layoutManager.findFirstVisibleItemPosition());
     }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item){
-        int clickedItemPos = item.getOrder();
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)  item.getMenuInfo();
-        int listPosition = info.position;
-        Book book = (Book) mAdapter.getItem(listPosition);
-        Log.v("clicked pos",""+ listPosition);
-        return super.onContextItemSelected(item);
-    }
 
     @Override
     public void onPause()

@@ -6,12 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
-import com.gaurav.cdsrecyclerview.CdsRecyclerView;
-import com.gaurav.cdsrecyclerview.CdsRecyclerViewAdapter;
 
 import org.parceler.Parcels;
 
@@ -26,9 +24,9 @@ public class DisplaySearchResultActivity extends AppCompatActivity {
     public static final String EXTRA_ADDING = "com.example.grzegorz.myfirstapp.ADDING";
 
 
-    private CdsRecyclerView mRecyclerView;
-    private CdsRecyclerViewAdapter mAdapter;
-    private CdsRecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView mRecyclerView;
+    private MyAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,7 @@ public class DisplaySearchResultActivity extends AppCompatActivity {
         String title = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_TITLE);
         String author = intent.getStringExtra(DisplayBookAddingActivity.EXTRA_AUTHOR);
 
-        mRecyclerView = (CdsRecyclerView) findViewById(R.id.recyclerViewSearch);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewSearch);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -127,22 +125,7 @@ public class DisplaySearchResultActivity extends AppCompatActivity {
                     public void run() {
                         mAdapter = new MyAdapter(array, DisplaySearchResultActivity.this);
                         mRecyclerView.setAdapter(mAdapter);
-                        mRecyclerView.setItemClickListener(new CdsRecyclerView.ItemClickListener() {
-                            @Override
-                            public void onItemClick(int i) {
 
-                                Book selectedBook =  (Book) mAdapter.getItem(i);
-                                Context context = DisplaySearchResultActivity.this;
-                                Intent intent = new Intent(context, DisplaySingleBookActivity.class);
-                                intent.putExtra(DisplayLibraryActivity.EXTRA_BOOK, Parcels.wrap(selectedBook));
-                                //Find out if searching books to add or displaying one already tracked
-                                if(context instanceof DisplaySearchResultActivity)
-                                    intent.putExtra(DisplaySearchResultActivity.EXTRA_ADDING, true);
-
-
-                                context.startActivity(intent);
-                            }
-                        });
                     }
                 });
             }

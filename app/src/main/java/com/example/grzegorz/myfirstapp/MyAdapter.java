@@ -61,18 +61,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.BookViewHolder> {
     public void onBindViewHolder(BookViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-//        Log.v("title of book",mDataset[position].getTitle());
+//        Log.d("title of book",mDataset[position].getTitle());
 
         holder.mTextView.setText(mDataset.get(position).getTitle());
         holder.mATextView.setText(mDataset.get(position).getAuthor());
         if(mDataset.get(position).isHave_book()) {
-//            Log.v("have book","title:"+mDataset[position].getTitle()+"; have:"+mDataset[position].isHave_book());
+//            Log.d("have book","title:"+mDataset[position].getTitle()+"; have:"+mDataset[position].isHave_book());
             holder.mCardView.setBackgroundColor(packageContext.getResources().getColor(R.color.colorAccent));
         }
     }
 
     public void delete(int position){
-        Log.v("book MENU DELETE ",position+"");
+        Log.d("book MENU DELETE ",position+"");
 
         mDataset.remove(position);
         notifyItemRemoved(position);
@@ -114,7 +114,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.BookViewHolder> {
         public void onClick (View v) {
 
             int mSelectedItemPosition = getAdapterPosition();
-            Log.v("selectedPosition","numbr: " + mSelectedItemPosition+ "; selected book: "+MyAdapter.mDataset.get(getAdapterPosition()).getTitle());
+            Log.d("selectedPosition","numbr: " + mSelectedItemPosition+ "; selected book: "+MyAdapter.mDataset.get(getAdapterPosition()).getTitle());
 
             Book selectedBook = MyAdapter.mDataset.get(getAdapterPosition());
             Intent intent = new Intent(MyAdapter.packageContext, DisplaySingleBookActivity.class);
@@ -151,7 +151,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.BookViewHolder> {
             int listPosition = getAdapterPosition();
             Book book = MyAdapter.mDataset.get(listPosition);
             if(pos == 0){
-                Log.v("book deleted",book.getTitle());
+                Log.d("book deleted",book.getTitle());
                 MySQLiteHelper db = new MySQLiteHelper(packageContext);
                 db.deleteBook(book);
                 delete(listPosition);

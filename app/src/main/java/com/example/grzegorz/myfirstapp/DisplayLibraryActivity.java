@@ -114,7 +114,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         savedInstanceState.putInt("orderBy", orderBy);
-        Log.v("orderBy","numbr: " + orderBy);
+        Log.d("orderBy","numbr: " + orderBy);
 
         LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
         savedInstanceState.putInt("position", layoutManager.findFirstVisibleItemPosition());
@@ -134,7 +134,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v("orderByResuuuuume","numbr: " + orderBy);
+        Log.d("orderByResuuuuume","numbr: " + orderBy);
         //set recyclerview position
         showLibrary();
         if(scrollPos != -1)
@@ -149,7 +149,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
         orderBy = savedInstanceState.getInt("orderBy");
-        Log.v("orderByRestore","numbr: " + orderBy);
+        Log.d("orderByRestore","numbr: " + orderBy);
 
         showLibrary();
         LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
@@ -170,7 +170,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
     private void initializeList() {
         MySQLiteHelper db = new MySQLiteHelper(this);
         List<Book> books = db.getAllBooks();
-        Log.v("Books","numbr: " + books.size());
+        Log.d("Books","numbr: " + books.size());
 
         Book[] array = new Book[books.size()];
         books.toArray(array);
@@ -198,7 +198,7 @@ public class DisplayLibraryActivity extends AppCompatActivity {
                     return o1.getAuthor().compareTo(o2.getAuthor());
             }
         });
-        Log.v("Books","numbr: " + books.size());
+        Log.d("Books","numbr: " + books.size());
 
         Book[] array = new Book[books.size()];
         books.toArray(array);

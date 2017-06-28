@@ -84,7 +84,7 @@ public class DisplaySearchResultActivity extends AppCompatActivity {
     private void initializeList() {
         MySQLiteHelper db = new MySQLiteHelper(this);
         List<Book> books = db.getAllBooks();
-        Log.v("Books", "numbr: " + books.size());
+        Log.d("Books", "numbr: " + books.size());
 
         Book[] array = new Book[books.size()];
         books.toArray(array);
@@ -98,7 +98,7 @@ public class DisplaySearchResultActivity extends AppCompatActivity {
     private void showLibrary() {
         MySQLiteHelper db = new MySQLiteHelper(this);
         List<Book> books = db.getAllBooks();
-        Log.v("Books", "numbr: " + books.size());
+        Log.d("Books", "numbr: " + books.size());
 
         Book[] array = new Book[books.size()];
         books.toArray(array);

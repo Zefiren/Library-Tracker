@@ -32,7 +32,7 @@ public class DisplaySingleBookActivity extends AppCompatActivity {
         TextView titleView = (TextView)  findViewById(R.id.titleText);
         TextView authorView = (TextView)  findViewById(R.id.authorText);
         Button haveBtn = (Button)  findViewById(R.id.haveBook);
-        Log.v("book shown"," book: "+book.getTitle() + "; ID: "+ book.getLibraryID());
+        Log.d("book shown"," book: "+book.getTitle() + "; ID: "+ book.getLibraryID());
 
 
         checkLibrary();

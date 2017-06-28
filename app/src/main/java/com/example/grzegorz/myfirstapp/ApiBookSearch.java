@@ -83,7 +83,7 @@ public class ApiBookSearch extends AsyncTask<String,Void,List<Book>> {
 
 
                         }
-                        Log.v("number of books",parser.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getString("title"));
+                        Log.d("number of books",parser.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getString("title"));
 
 
 
@@ -102,12 +102,12 @@ public class ApiBookSearch extends AsyncTask<String,Void,List<Book>> {
 
 
                     } else {
-                        Log.v("what went wrong?",Integer.toString(myConnection.getResponseCode()));
+                        Log.d("what went wrong?",Integer.toString(myConnection.getResponseCode()));
                         // Error handling code goes here
                     }
-                    Log.v("number of books","connection done");
-                    Log.v("url was",myConnection.getResponseMessage());
-                    Log.v("url was",googleBooksEndpoint.toString());
+                    Log.d("number of books","connection done");
+                    Log.d("url was",myConnection.getResponseMessage());
+                    Log.d("url was",googleBooksEndpoint.toString());
 
 
                     myConnection.disconnect();
@@ -177,7 +177,7 @@ public class ApiBookSearch extends AsyncTask<String,Void,List<Book>> {
 
 
                 }
-                Log.v("number of books",parser.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getString("title"));
+                Log.d("number of books",parser.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getString("title"));
 
 
 
@@ -196,12 +196,12 @@ public class ApiBookSearch extends AsyncTask<String,Void,List<Book>> {
 
 
             } else {
-                Log.v("what went wrong?",Integer.toString(myConnection.getResponseCode()));
+                Log.d("what went wrong?",Integer.toString(myConnection.getResponseCode()));
                 // Error handling code goes here
             }
-            Log.v("number of books","connection done");
-            Log.v("url was",myConnection.getResponseMessage());
-            Log.v("url was",googleBooksEndpoint.toString());
+            Log.d("number of books","connection done");
+            Log.d("url was",myConnection.getResponseMessage());
+            Log.d("url was",googleBooksEndpoint.toString());
 
 
             myConnection.disconnect();

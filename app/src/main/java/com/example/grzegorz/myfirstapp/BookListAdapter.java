@@ -34,7 +34,7 @@ public class BookListAdapter extends ArrayAdapter<String> {
 //                // TODO Auto-generated method stub
 //                myCursor.moveToPosition(pos);
 //
-//                Log.v("Book:",Integer.toString(myCursor.getInt(0)) +  " "+ myCursor.getString(1));
+//                Log.d("Book:",Integer.toString(myCursor.getInt(0)) +  " "+ myCursor.getString(1));
 //                myDB.delete("books","bookID = ?",new String[]{Integer.toString(myCursor.getInt(0))});
 //
 //                final Cursor myCursor =
@@ -51,7 +51,7 @@ public class BookListAdapter extends ArrayAdapter<String> {
 //
 //                ListView listView = (ListView) findViewById(R.id.messageList);
 //                listView.setAdapter(adapter);
-//                Log.v("long clicked","pos: " + pos);
+//                Log.d("long clicked","pos: " + pos);
 //
 //                return true;
 //            }

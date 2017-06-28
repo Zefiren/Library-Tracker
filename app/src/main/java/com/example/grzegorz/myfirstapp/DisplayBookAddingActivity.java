@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -33,6 +36,79 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
 
     public static final String EXTRA_TITLE = "com.example.grzegorz.myfirstapp.TITLE";
     public static final String EXTRA_AUTHOR = "com.example.grzegorz.myfirstapp.AUTHOR";
+    public static String authorSave;
+    public static String titleSave;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_display, menu);
+
+        MenuItem item = menu.findItem(R.id.helpItem);
+        item.setVisible(true);
+        return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        EditText editTitle = (EditText) findViewById(R.id.editTitle);
+        EditText editAuthor = (EditText) findViewById(R.id.editAuthor);
+
+        String title = editTitle.getText().toString().trim();
+        String author = editAuthor.getText().toString().trim();
+
+        savedInstanceState.putString("author", author);
+        savedInstanceState.putString("title", title);
+    }
+
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        EditText editTitle = (EditText) findViewById(R.id.editTitle);
+        EditText editAuthor = (EditText) findViewById(R.id.editAuthor);
+
+        String title = editTitle.getText().toString().trim();
+        String author = editAuthor.getText().toString().trim();
+
+        authorSave = author;
+        titleSave = title;
+        //read current recyclerview position
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EditText editTitle = (EditText) findViewById(R.id.editTitle);
+        EditText editAuthor = (EditText) findViewById(R.id.editAuthor);
+
+        editTitle.setText(titleSave);
+        editAuthor.setText(authorSave);
+        Log.d("authorResumeeeeee",": " + authorSave);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        EditText editTitle = (EditText) findViewById(R.id.editTitle);
+        EditText editAuthor = (EditText) findViewById(R.id.editAuthor);
+
+        editTitle.setText( savedInstanceState.getString("title"));
+        editAuthor.setText( savedInstanceState.getString("author"));
+        Log.d("authorRestore",": " +  savedInstanceState.getString("author"));
+        Log.d("titleRestore",": " +  savedInstanceState.getString("title"));
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +116,10 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_books);
     }
 
+
+
     public void searchBook(View view) {
-        Log.v("number of books", "beginning");
+        Log.d("number of books", "beginning");
         if (true) {
             Intent intent = new Intent(this, DisplaySearchResultActivity.class);
 
@@ -118,7 +196,7 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
                                 bookInfo.append(")");
                                 bookList.add(bookInfo.toString());
                             }
-                            Log.v("number of books", parser.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getString("title"));
+                            Log.d("number of books", parser.getJSONArray("items").getJSONObject(0).getJSONObject("volumeInfo").getString("title"));
 
                             String[] array = new String[bookList.size()];
                             bookList.toArray(array);
@@ -135,12 +213,12 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
 
 
                         } else {
-                            Log.v("what went wrong?", Integer.toString(myConnection.getResponseCode()));
+                            Log.d("what went wrong?", Integer.toString(myConnection.getResponseCode()));
                             // Error handling code goes here
                         }
-                        Log.v("number of books", "connection done");
-                        Log.v("url was", myConnection.getResponseMessage());
-                        Log.v("url was", googleBooksEndpoint.toString());
+                        Log.d("number of books", "connection done");
+                        Log.d("url was", myConnection.getResponseMessage());
+                        Log.d("url was", googleBooksEndpoint.toString());
 
 
                         myConnection.disconnect();

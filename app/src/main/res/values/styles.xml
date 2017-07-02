@@ -15,7 +15,5 @@
         <item name="android:actionMenuTextColor">#cc0e0e</item>
 
     </style>
-    <style name="mySpinnerItemStyle" parent="Base.Widget.AppCompat.Spinner">
-        <item name="android:textColor">#ffff00</item>
-    </style>
+
 </resources>

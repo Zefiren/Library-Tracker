@@ -38,6 +38,23 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.BookViewHolder> {
         this.packageContext = packageContext;
     }
 
+    public MyAdapter(List<Book> myDataset, Context packageContext) {
+        mDataset = new ArrayList<>( myDataset);
+        this.packageContext = packageContext;
+    }
+
+    public void swap(Book[] myDataset){
+        mDataset.clear();
+        mDataset.addAll( Arrays.asList(myDataset));
+        notifyDataSetChanged();
+    }
+
+    public void swap(List<Book> myDataset){
+        mDataset.clear();
+        mDataset.addAll(myDataset);
+        notifyDataSetChanged();
+    }
+
     public Book getItem(int position) {
         return mDataset.get(position);
     }

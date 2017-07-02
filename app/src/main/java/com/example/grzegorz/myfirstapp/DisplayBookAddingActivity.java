@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +47,14 @@ public class DisplayBookAddingActivity extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.helpItem);
         item.setVisible(true);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast t = Toast.makeText(DisplayBookAddingActivity.this,"testing, Help?",Toast.LENGTH_LONG);
+                t.show();
+                return false;
+            }
+        });
         return true;
     }
 

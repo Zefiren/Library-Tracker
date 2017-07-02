@@ -80,8 +80,8 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         item.setVisible(true);
         final Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_options, android.R.layout.simple_spinner_item);
+        CustomSpinnerAdapter<CharSequence> adapter = new CustomSpinnerAdapter<CharSequence>(this, R.layout.text_row_item
+                ,getResources().getStringArray(R.array.sort_options));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -114,7 +114,6 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         savedInstanceState.putInt("orderBy", orderBy);
-        Log.d("orderBy","numbr: " + orderBy);
 
         LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
         savedInstanceState.putInt("position", layoutManager.findFirstVisibleItemPosition());
@@ -134,7 +133,6 @@ public class DisplayLibraryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("orderByResuuuuume","numbr: " + orderBy);
         //set recyclerview position
         showLibrary();
         if(scrollPos != -1)
@@ -149,7 +147,6 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
         orderBy = savedInstanceState.getInt("orderBy");
-        Log.d("orderByRestore","numbr: " + orderBy);
 
         showLibrary();
         LinearLayoutManager layoutManager = ((LinearLayoutManager)mRecyclerView.getLayoutManager());
@@ -170,12 +167,8 @@ public class DisplayLibraryActivity extends AppCompatActivity {
     private void initializeList() {
         MySQLiteHelper db = new MySQLiteHelper(this);
         List<Book> books = db.getAllBooks();
-        Log.d("Books","numbr: " + books.size());
 
-        Book[] array = new Book[books.size()];
-        books.toArray(array);
-
-        mAdapter = new MyAdapter(array, this);
+        mAdapter = new MyAdapter(books, this);
         mRecyclerView.setAdapter(mAdapter);
 
     }
@@ -192,28 +185,21 @@ public class DisplayLibraryActivity extends AppCompatActivity {
         books.sort(new Comparator<Book>() {
             @Override
             public int compare(Book o1, Book o2) {
-                if(orderBy == orderByTitle)
-                    return o1.getTitle().compareTo(o2.getTitle());
-                else
-                    return o1.getAuthor().compareTo(o2.getAuthor());
+                int compVal=0;
+                if(orderBy == orderByTitle) {
+                    compVal = o1.getTitle().compareTo(o2.getTitle());
+                    compVal = compVal == 0 ? o1.getAuthor().compareTo(o2.getAuthor()) : compVal;
+                    return compVal;
+                }
+                else {
+                    compVal =o1.getAuthor().compareTo(o2.getAuthor());
+                    compVal = compVal == 0 ? o1.getTitle().compareTo(o2.getTitle()) : compVal;
+
+                    return compVal;
+                }
             }
         });
-        Log.d("Books","numbr: " + books.size());
-
-        Book[] array = new Book[books.size()];
-        books.toArray(array);
-
-//        final Cursor myCursor =
-//                myDB.query("books", new String[]{"bookID", "title", "author", "haveBook"}, null, null, null, null, orderBy);
-
-//        Book[] books = new Book[myCursor.getCount()];
-//        while (myCursor.moveToNext()) {
-//            Book book = new Book(myCursor.getString(1), myCursor.getString(2), myCursor.getInt(3) == 1, myCursor.getInt(0));
-//            books[myCursor.getPosition()] = book;
-//        }
-
-        mAdapter = new MyAdapter(array, this);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.swap(books);
 
     }
 

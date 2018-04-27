@@ -1,5 +1,5 @@
 # Library-Tracker
-
+## Code for the app is in the [app/src/main/java/com/example/grzegorz/myfirstapp](/app/src/main/java/com/example/grzegorz/myfirstapp) folder.
 This is an android app I wanted to develop during the summer to learn how apps are made and also solve a problem I had in real life.
 
 When I visit any bookshop and find a series which I believe I may already have books from, my biggest problem is remembering which    volumes of a series I already have. The idea behind this app was to be able to lookup any book using Google Books API.
